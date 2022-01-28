@@ -38,12 +38,6 @@ export default function PaginaInicial() {
     setUsername(inputValue);
   }
 
-  function handleError(inputValue) {
-    if (inputValue) {
-      console.log()
-    }
-  }
-
   useEffect(() => {
     async function response() {
       if (username.length < 3) return;
@@ -53,16 +47,15 @@ export default function PaginaInicial() {
       await fetch(src)
         .then((res) => res.json())
         .then((res) => {
-          console.log(res.avatar_url)
+
           if (res.message) {
             setImage(logo.src)
-            setUsername('Who is me?');
+            setUsername('');
             setInputValue('');
             return;
           }
           setImage(`https://github.com/${username}.png`);
           localStorage.setItem('@usergithub', JSON.stringify({ nome: username, avatar: res.avatar_url }))
-
 
           //  <ReactLoading type={'spin'} color={appConfig.theme.colors.black[800]} height={20} width={20} />
           setTimeout(() => {

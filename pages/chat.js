@@ -8,7 +8,7 @@ export default function ChatPage() {
     const [listaDeMensagens, setListaDeMensagens] = useState([]);
     const [user, setUser] = useState('');
     const [login, setLogin] = useState([]);
-
+    
     // ./Sua lógica vai aqui
     function handleSendMessage(event) {
         const mensagemObject = {
@@ -29,7 +29,7 @@ export default function ChatPage() {
     useEffect(() => {
         setLogin(JSON.parse(localStorage.getItem("@usergithub")))
         setUser(login.nome);
-    }, [])
+    }, [user])
 
     useEffect(() => {
         return listaDeMensagens
@@ -131,6 +131,7 @@ function Header() {
 }
 
 function MessageList(props) {
+    console.log(props)
     return (
         <Box
             tag="ul"
