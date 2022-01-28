@@ -1,6 +1,7 @@
 import { Box, Button, Text, TextField, Image, } from '@skynexui/components';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import ReactLoading from 'react-loading';
 
 import appConfig from '../config.json';
 
@@ -31,6 +32,7 @@ export default function PaginaInicial() {
   console.log(image === '')
   function handleJoin(event) {
     event.preventDefault();
+
     if (inputValue.length < 2) return;
 
     setUsername(inputValue);
@@ -59,7 +61,10 @@ export default function PaginaInicial() {
             return;
           }
           setImage(`https://github.com/${username}.png`);
-          localStorage.setItem('@usergithub', JSON.stringify({nome: username, avatar: res.avatar_url}))
+          localStorage.setItem('@usergithub', JSON.stringify({ nome: username, avatar: res.avatar_url }))
+
+
+          //  <ReactLoading type={'spin'} color={appConfig.theme.colors.black[800]} height={20} width={20} />
           setTimeout(() => {
             roteamento.push('/chat');
           }, 3000);
@@ -140,18 +145,22 @@ export default function PaginaInicial() {
               value={inputValue}
               onChange={(value) => setInputValue(value.target.value)}
             />
-            <Button
-              type='submit'
-              label='Entrar'
-              fullWidth
-              onClick={handleJoin}
-              buttonColors={{
-                contrastColor: appConfig.theme.colors.neutrals["000"],
-                mainColor: appConfig.theme.colors.purple["000"],
-                mainColorLight: appConfig.theme.colors.neutrals["900"],
-                mainColorStrong: appConfig.theme.colors.purple["200"],
-              }}
-            />
+            {username !== '' ?
+              <ReactLoading type={'spin'} color={appConfig.theme.colors.purple["000"]} height={20} width={20} />
+              :
+              <Button
+                type='submit'
+                label='Entrar'
+                fullWidth
+                onClick={handleJoin}
+                buttonColors={{
+                  contrastColor: appConfig.theme.colors.neutrals["000"],
+                  mainColor: appConfig.theme.colors.purple["000"],
+                  mainColorLight: appConfig.theme.colors.neutrals["900"],
+                  mainColorStrong: appConfig.theme.colors.purple["200"],
+                }}
+              />}
+
           </Box>
           {/* Formulário */}
 
