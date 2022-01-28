@@ -1,7 +1,10 @@
 import { Box, Button, Text, TextField, Image, } from '@skynexui/components';
 import { useEffect, useState } from 'react';
-import appConfig from '../config.json';
 import { useRouter } from 'next/router';
+
+import appConfig from '../config.json';
+
+import logo from '../assets/user.jpg';
 
 function Title(props) {
   const Tag = props.tag || 'h1';
@@ -45,16 +48,18 @@ export default function PaginaInicial() {
 
       const src = `https://api.github.com/users/${username}`;
 
-      setImage(`https://github.com/${username}.png`);
-
       await fetch(src)
         .then((res) => res.json())
         .then((res) => {
-          console.log(res)
+          console.log(res.avatar_url)
           if (res.message) {
-            setImage('https://w.wallhaven.cc/full/43/wallhaven-431wk6.jpg')
-            return alert('Usuário não existe.');
+            setImage(logo.src)
+            setUsername('Who is me?');
+            setInputValue('');
+            return;
           }
+          setImage(`https://github.com/${username}.png`);
+          localStorage.setItem('@usergithub', JSON.stringify({nome: username, avatar: res.avatar_url}))
           setTimeout(() => {
             roteamento.push('/chat');
           }, 3000);
@@ -70,8 +75,10 @@ export default function PaginaInicial() {
         styleSheet={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           backgroundColor: appConfig.theme.colors.neutrals[300],
-          backgroundImage: 'url(https://w.wallhaven.cc/full/nk/wallhaven-nkpldd.jpg)',
-          backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
+          backgroundImage: 'url(https://cdn.discordapp.com/attachments/899866343946457149/936426676076830790/9afe0493484903.5e66500f8dea4.gif)',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          backgroundBlendMode: 'multiply',
         }}
       >
         <Box
@@ -88,20 +95,32 @@ export default function PaginaInicial() {
             boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
             backgroundColor: appConfig.theme.colors.black[800],
             border: '1px solid',
-            borderColor: appConfig.theme.colors.green["200"]
+            borderColor: appConfig.theme.colors.purple["000"]
           }}
         >
           {/* Formulário */}
           <Box
             as="form"
             styleSheet={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: {
+                xs: '100%',
+                sm: '50%'
+              },
+              textAlign: 'center',
+              marginBottom: '32px',
             }}
           >
 
             <Title tag="h2">Boas vindas de volta!</Title>
-            <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals["000"] }}>
+            <Text variant="body3"
+              styleSheet={{
+                marginBottom: '32px',
+                color: appConfig.theme.colors.neutrals["000"]
+              }}>
               {appConfig.name} <Text styleSheet={{ color: appConfig.theme.colors.success["000"] }}>{appConfig.status}</Text>
             </Text>
 
@@ -112,9 +131,9 @@ export default function PaginaInicial() {
               placeholder='Digite seu nome'
               textFieldColors={{
                 neutral: {
-                  textColor: appConfig.theme.colors.primary["000"],
+                  textColor: appConfig.theme.colors.neutrals["000"],
                   mainColor: appConfig.theme.colors.primary["000"],
-                  mainColorHighlight: appConfig.theme.colors.green["000"],
+                  mainColorHighlight: appConfig.theme.colors.purple["000"],
                   backgroundColor: appConfig.theme.colors.black["800"],
                 },
               }}
@@ -128,9 +147,9 @@ export default function PaginaInicial() {
               onClick={handleJoin}
               buttonColors={{
                 contrastColor: appConfig.theme.colors.neutrals["000"],
-                mainColor: appConfig.theme.colors.green["000"],
-                mainColorLight: appConfig.theme.colors.neutrals["000"],
-                mainColorStrong: appConfig.theme.colors.neutrals["000"],
+                mainColor: appConfig.theme.colors.purple["000"],
+                mainColorLight: appConfig.theme.colors.neutrals["900"],
+                mainColorStrong: appConfig.theme.colors.purple["200"],
               }}
             />
           </Box>
@@ -146,7 +165,7 @@ export default function PaginaInicial() {
               padding: '16px',
               backgroundColor: appConfig.theme.colors.black[800],
               border: '1px solid',
-              borderColor: appConfig.theme.colors.green["000"],
+              borderColor: appConfig.theme.colors.purple["000"],
               borderRadius: '10px',
               flex: 1,
               minHeight: '240px',
@@ -159,7 +178,7 @@ export default function PaginaInicial() {
                 height: '150px',
                 objectFit: 'cover'
               }}
-              src={image === '' ? 'https://w.wallhaven.cc/full/43/wallhaven-431wk6.jpg' : image}
+              src={image === '' ? logo.src : image}
             />
             <Text
               variant="body4"
@@ -170,7 +189,7 @@ export default function PaginaInicial() {
                 borderRadius: '1000px'
               }}
             >
-              {username === '' ? 'Who is my?' : username}
+              {username === '' ? 'Who is me?' : username}
             </Text>
           </Box>
           {/* Photo Area */}
