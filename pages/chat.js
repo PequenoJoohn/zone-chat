@@ -1,6 +1,11 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React, { useEffect, useState } from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQwODU3MywiZXhwIjoxOTU4OTg0NTczfQ.2ENOC0_4xkeltnYlci9cBMrQ4xgoiejEhfW1vpsRZys';
+const SUPABASE_URL = 'https://xqzvwciblktsrqupxxpv.supabase.co';
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ChatPage() {
     // Sua lógica vai aqui
@@ -8,20 +13,29 @@ export default function ChatPage() {
     const [listaDeMensagens, setListaDeMensagens] = useState([]);
     const [user, setUser] = useState('');
     const [login, setLogin] = useState([]);
-    
+
     // ./Sua lógica vai aqui
     function handleSendMessage(event) {
         const mensagemObject = {
-            id: listaDeMensagens.length + 1,
+            // id: listaDeMensagens.length + 1,
             de: user,
             texto: mensagem
         }
+
+
         if (event.key === 'Enter') {
             event.preventDefault();
-            setListaDeMensagens([
-                mensagemObject,
-                ...listaDeMensagens
-            ])
+            supabaseClient
+                .from('mensagens')
+                .insert([
+                    mensagemObject
+                ]).then(({ data }) => {
+
+                    setListaDeMensagens([
+                        data[0],
+                        ...listaDeMensagens
+                    ])
+                });
             setMensagem('');
         }
     }
@@ -32,7 +46,15 @@ export default function ChatPage() {
     }, [user])
 
     useEffect(() => {
-        return listaDeMensagens
+        supabaseClient
+            .from('mensagens')
+            .select('*')
+            .order('id', { ascending: false })
+            .then(({ data }) => {
+                setListaDeMensagens(data)
+            });
+
+        return listaDeMensagens;
     }, [listaDeMensagens]);
 
     return (
@@ -73,7 +95,7 @@ export default function ChatPage() {
                     }}
                 >
 
-                    <MessageList mensagens={listaDeMensagens} image={login.avatar} />
+                    <MessageList mensagens={listaDeMensagens} />
 
                     <Box
                         as="form"
@@ -131,7 +153,6 @@ function Header() {
 }
 
 function MessageList(props) {
-    console.log(props)
     return (
         <Box
             tag="ul"
@@ -170,7 +191,7 @@ function MessageList(props) {
                                 display: 'inline-block',
                                 marginRight: '8px',
                             }}
-                            src={props.image}
+                            src={`https://github.com/${mensagem.de}.png`}
                         />
                         <Text tag="strong">
                             {mensagem.de}

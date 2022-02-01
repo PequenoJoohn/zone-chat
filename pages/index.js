@@ -126,7 +126,7 @@ export default function PaginaInicial() {
               fullWidth
               isValid=""
               rounded="sm"
-              placeholder='Digite seu nome'
+              placeholder='Digite seu github'
               textFieldColors={{
                 neutral: {
                   textColor: appConfig.theme.colors.neutrals["000"],
